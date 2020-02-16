@@ -1,5 +1,5 @@
 {
-  "name": "draft-js-markdown-plugin",
+  "name": "@factoryfour/draft-js-markdown-plugin",
   "version": "4.0.2",
   "description": "A DraftJS plugin for supporting Markdown syntax shortcuts, fork of draft-js-markdown-shortcuts-plugin",
   "main": "lib/index.js",

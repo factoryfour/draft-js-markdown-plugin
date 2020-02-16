@@ -1976,7 +1976,7 @@ draft-js-prism@ngs/draft-js-prism#6edb31c3805dd1de3fb897cc27fced6bac1bafbb:
     immutable "*"
     prismjs "^1.5.0"
 
-draft-js@^0.11.0:
+draft-js@^0.11.0, draft-js@^0.11.4, draft-js@~0.10.0:
   version "0.11.4"
   resolved "https://registry.yarnpkg.com/draft-js/-/draft-js-0.11.4.tgz#e48782b96b90a5c14f2cb34c164c2a1a359d8a48"
   integrity sha512-BLZ59s0vkDj/zI8UPo9Nit/hPsl11ztDejxDCQlVbvEXJSWrTXqO6ZYgdw3hXLtuojq/URqq3wTrpnb3dvzvLA==
@@ -1984,14 +1984,6 @@ draft-js@^0.11.0:
     fbjs "^1.0.0"
     immutable "~3.7.4"
     object-assign "^4.1.1"
-
-draft-js@~0.10.0:
-  version "0.10.2"
-  resolved "https://registry.yarnpkg.com/draft-js/-/draft-js-0.10.2.tgz#b722613cb306cfee910f9de1789f2cc3023772e7"
-  dependencies:
-    fbjs "^0.8.12"
-    immutable "~3.7.4"
-    object-assign "^4.1.0"
 
 duplexer3@^0.1.4:
   version "0.1.4"
@@ -2492,18 +2484,6 @@ fbjs-css-vars@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/fbjs-css-vars/-/fbjs-css-vars-1.0.2.tgz#216551136ae02fe255932c3ec8775f18e2c078b8"
   integrity sha512-b2XGFAFdWZWg0phtAWLHCk836A1Xann+I+Dgd3Gk64MHKZO44FfoD1KxyvbSh0qZsIoXQGGlVztIY+oitJPpRQ==
-
-fbjs@^0.8.12:
-  version "0.8.15"
-  resolved "https://registry.yarnpkg.com/fbjs/-/fbjs-0.8.15.tgz#4f0695fdfcc16c37c0b07facec8cb4c4091685b9"
-  dependencies:
-    core-js "^1.0.0"
-    isomorphic-fetch "^2.1.1"
-    loose-envify "^1.0.0"
-    object-assign "^4.1.0"
-    promise "^7.1.1"
-    setimmediate "^1.0.5"
-    ua-parser-js "^0.7.9"
 
 fbjs@^0.8.16, fbjs@^0.8.4, fbjs@^0.8.9:
   version "0.8.16"

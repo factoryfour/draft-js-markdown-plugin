@@ -102,11 +102,12 @@ function checkCharacterForState(config, editorState, character) {
     editorState === newEditorState &&
     config.features.inline.includes('IMAGE')
   ) {
-    newEditorState = handleImage(
-      editorState,
-      character,
-      config.entityType.IMAGE
-    );
+    // console.error('detecting image');
+    // newEditorState = handleImage(
+    //   editorState,
+    //   character,
+    //   config.entityType.IMAGE
+    // );
   }
   if (
     editorState === newEditorState &&

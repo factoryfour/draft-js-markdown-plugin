@@ -10,8 +10,7 @@
     "clean": "node_modules/.bin/rimraf lib; node_modules/.bin/rimraf demo/public",
     "dev": "node_modules/.bin/babel-node ./demo/server.js",
     "prettier": "prettier --write \"**/*\"",
-    "test": "jest",
-    "precommit": "jest && lint-staged"
+    "test": "jest"
   },
   "repository": {
     "type": "git",

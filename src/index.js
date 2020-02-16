@@ -1,63 +1,63 @@
-import React from "react";
+import React from 'react';
 import {
   blockRenderMap as checkboxBlockRenderMap,
   CheckableListItem,
   CheckableListItemUtils,
   CHECKABLE_LIST_ITEM,
-} from "draft-js-checkable-list-item";
+} from 'draft-js-checkable-list-item';
 
-import { Map, OrderedSet, is } from "immutable";
-import CodeBlock from "./components/Code";
+import { Map, OrderedSet, is } from 'immutable';
+import CodeBlock from './components/Code';
 import {
   getDefaultKeyBinding,
   Modifier,
   EditorState,
   RichUtils,
   DefaultDraftInlineStyle,
-} from "draft-js";
-import adjustBlockDepth from "./modifiers/adjustBlockDepth";
-import handleBlockType from "./modifiers/handleBlockType";
-import handleInlineStyle from "./modifiers/handleInlineStyle";
-import splitBlockAndChange from "./modifiers/splitBlockAndChange";
-import handleNewCodeBlock from "./modifiers/handleNewCodeBlock";
-import resetInlineStyle from "./modifiers/resetInlineStyle";
-import insertEmptyBlock from "./modifiers/insertEmptyBlock";
-import handleLink from "./modifiers/handleLink";
-import handleImage from "./modifiers/handleImage";
-import leaveList from "./modifiers/leaveList";
-import insertText from "./modifiers/insertText";
-import changeCurrentBlockType from "./modifiers/changeCurrentBlockType";
-import createLinkDecorator from "./decorators/link";
-import createImageDecorator from "./decorators/image";
-import { replaceText, getCurrentLine } from "./utils";
+} from 'draft-js';
+import adjustBlockDepth from './modifiers/adjustBlockDepth';
+import handleBlockType from './modifiers/handleBlockType';
+import handleInlineStyle from './modifiers/handleInlineStyle';
+import splitBlockAndChange from './modifiers/splitBlockAndChange';
+import handleNewCodeBlock from './modifiers/handleNewCodeBlock';
+import resetInlineStyle from './modifiers/resetInlineStyle';
+import insertEmptyBlock from './modifiers/insertEmptyBlock';
+import handleLink from './modifiers/handleLink';
+import handleImage from './modifiers/handleImage';
+import leaveList from './modifiers/leaveList';
+import insertText from './modifiers/insertText';
+import changeCurrentBlockType from './modifiers/changeCurrentBlockType';
+import createLinkDecorator from './decorators/link';
+import createImageDecorator from './decorators/image';
+import { replaceText, getCurrentLine } from './utils';
 import {
   CODE_BLOCK_REGEX,
   CODE_BLOCK_TYPE,
   ENTITY_TYPE,
   defaultInlineWhitelist,
   defaultBlockWhitelist,
-} from "./constants";
+} from './constants';
 
 const defaultLanguages = {
-  bash: "Bash",
-  c: "C",
-  cpp: "C++",
-  css: "CSS",
-  go: "Go",
-  html: "HTML",
-  java: "Java",
-  js: "JavaScript",
-  kotlin: "Kotlin",
-  mathml: "MathML",
-  perl: "Perl",
-  ruby: "Ruby",
-  scala: "Scala",
-  sql: "SQL",
-  svg: "SVG",
-  swift: "Swift",
+  bash: 'Bash',
+  c: 'C',
+  cpp: 'C++',
+  css: 'CSS',
+  go: 'Go',
+  html: 'HTML',
+  java: 'Java',
+  js: 'JavaScript',
+  kotlin: 'Kotlin',
+  mathml: 'MathML',
+  perl: 'Perl',
+  ruby: 'Ruby',
+  scala: 'Scala',
+  sql: 'SQL',
+  svg: 'SVG',
+  swift: 'Swift',
 };
 
-const INLINE_STYLE_CHARACTERS = ["*", "_", "`", "~"];
+const INLINE_STYLE_CHARACTERS = ['*', '_', '`', '~'];
 
 const defaultRenderSelect = ({ options, onChange, selectedValue }) => (
   <select value={selectedValue} onChange={onChange}>
@@ -75,7 +75,7 @@ function inLink(editorState) {
   const block = contentState.getBlockForKey(selection.getAnchorKey());
   const entityKey = block.getEntityAt(selection.getFocusOffset());
   return (
-    entityKey != null && contentState.getEntity(entityKey).getType() === "LINK"
+    entityKey != null && contentState.getEntity(entityKey).getType() === 'LINK'
   );
 }
 
@@ -86,7 +86,7 @@ function inCodeBlock(editorState) {
       .getCurrentContent()
       .getBlockForKey(startKey)
       .getType();
-    if (currentBlockType === "code-block") return true;
+    if (currentBlockType === 'code-block') return true;
   }
 
   return false;
@@ -100,7 +100,7 @@ function checkCharacterForState(config, editorState, character) {
   );
   if (
     editorState === newEditorState &&
-    config.features.inline.includes("IMAGE")
+    config.features.inline.includes('IMAGE')
   ) {
     newEditorState = handleImage(
       editorState,
@@ -110,13 +110,13 @@ function checkCharacterForState(config, editorState, character) {
   }
   if (
     editorState === newEditorState &&
-    config.features.inline.includes("LINK")
+    config.features.inline.includes('LINK')
   ) {
     newEditorState = handleLink(editorState, character, config.entityType.LINK);
   }
   if (
     newEditorState === editorState &&
-    config.features.block.includes("CODE")
+    config.features.block.includes('CODE')
   ) {
     const contentState = editorState.getCurrentContent();
     const selection = editorState.getSelection();
@@ -124,7 +124,7 @@ function checkCharacterForState(config, editorState, character) {
     const currentBlock = contentState.getBlockForKey(key);
     const text = currentBlock.getText();
     const type = currentBlock.getType();
-    if (type !== "code-block" && CODE_BLOCK_REGEX.test(text))
+    if (type !== 'code-block' && CODE_BLOCK_REGEX.test(text))
       newEditorState = handleNewCodeBlock(editorState);
   }
   if (editorState === newEditorState) {
@@ -149,12 +149,12 @@ function checkReturnForState(config, editorState, ev) {
   const type = currentBlock.getType();
   const text = currentBlock.getText();
 
-  if (/-list-item$/.test(type) && text === "") {
+  if (/-list-item$/.test(type) && text === '') {
     newEditorState = leaveList(editorState);
   }
 
   const isHeader = /^header-/.test(type);
-  const isBlockQuote = type === "blockquote";
+  const isBlockQuote = type === 'blockquote';
   const isAtEndOfLine = endOffset === blockLength;
   const atEndOfHeader = isHeader && isAtEndOfLine;
   const atEndOfBlockQuote = isBlockQuote && isAtEndOfLine;
@@ -166,7 +166,7 @@ function checkReturnForState(config, editorState, ev) {
   ) {
     // transform markdown (if we aren't in a codeblock that is)
     if (!inCodeBlock(editorState)) {
-      newEditorState = checkCharacterForState(config, newEditorState, "\n");
+      newEditorState = checkCharacterForState(config, newEditorState, '\n');
     }
     if (newEditorState === editorState) {
       newEditorState = insertEmptyBlock(newEditorState);
@@ -178,24 +178,24 @@ function checkReturnForState(config, editorState, ev) {
   }
   if (
     newEditorState === editorState &&
-    type !== "code-block" &&
-    config.features.block.includes("CODE") &&
+    type !== 'code-block' &&
+    config.features.block.includes('CODE') &&
     CODE_BLOCK_REGEX.test(text)
   ) {
     newEditorState = handleNewCodeBlock(editorState);
   }
-  if (newEditorState === editorState && type === "code-block") {
+  if (newEditorState === editorState && type === 'code-block') {
     if (/```\s*$/.test(text)) {
       newEditorState = changeCurrentBlockType(
         newEditorState,
         type,
-        text.replace(/```\s*$/, "")
+        text.replace(/```\s*$/, '')
       );
       newEditorState = insertEmptyBlock(newEditorState);
     } else if (ev.shiftKey) {
       newEditorState = insertEmptyBlock(newEditorState);
     } else {
-      newEditorState = insertText(editorState, "\n");
+      newEditorState = insertText(editorState, '\n');
     }
   }
 
@@ -205,7 +205,7 @@ function checkReturnForState(config, editorState, ev) {
 const unstickyInlineStyles = (character, editorState) => {
   const selection = editorState.getSelection();
   if (!selection.isCollapsed()) return editorState;
-  if (editorState.getLastChangeType() !== "md-to-inline-style") {
+  if (editorState.getLastChangeType() !== 'md-to-inline-style') {
     return editorState;
   }
 
@@ -232,7 +232,7 @@ const unstickyInlineStyles = (character, editorState) => {
   if (nextStyle.size !== 0) return editorState;
 
   const newContent = Modifier.insertText(content, selection, character);
-  return EditorState.push(editorState, newContent, "insert-characters");
+  return EditorState.push(editorState, newContent, 'insert-characters');
 };
 
 const defaultConfig = {
@@ -264,8 +264,8 @@ const createMarkdownPlugin = (_config = {}) => {
   return {
     store,
     blockRenderMap: Map({
-      "code-block": {
-        element: "code",
+      'code-block': {
+        element: 'code',
         wrapper: <pre spellCheck="false" />,
       },
     }).merge(checkboxBlockRenderMap),
@@ -311,7 +311,7 @@ const createMarkdownPlugin = (_config = {}) => {
                   )
                 );
               },
-              checked: !!block.getData().get("checked"),
+              checked: !!block.getData().get('checked'),
             },
           };
         }
@@ -324,7 +324,7 @@ const createMarkdownPlugin = (_config = {}) => {
               languages: config.languages,
               getReadOnly,
               setReadOnly,
-              language: block.getData().get("language"),
+              language: block.getData().get('language'),
               getEditorState,
             },
           };
@@ -339,13 +339,13 @@ const createMarkdownPlugin = (_config = {}) => {
       const newEditorState = adjustBlockDepth(editorState, ev);
       if (newEditorState !== editorState) {
         setEditorState(newEditorState);
-        return "handled";
+        return 'handled';
       }
-      return "not-handled";
+      return 'not-handled';
     },
     // oddly handleReturn does not get the event timestamp
     handleReturn(ev, editorState, { setEditorState }) {
-      if (inLink(editorState)) return "not-handled";
+      if (inLink(editorState)) return 'not-handled';
 
       let newEditorState = checkReturnForState(config, editorState, ev);
       const selection = newEditorState.getSelection();
@@ -356,10 +356,10 @@ const createMarkdownPlugin = (_config = {}) => {
         !is(editorState.getImmutable(), newEditorState.getImmutable())
       ) {
         setEditorState(newEditorState);
-        return "handled";
+        return 'handled';
       }
 
-      newEditorState = checkCharacterForState(config, newEditorState, "\n");
+      newEditorState = checkCharacterForState(config, newEditorState, '\n');
       let content = newEditorState.getCurrentContent();
 
       // if there are actually no changes but the editorState has a
@@ -375,12 +375,12 @@ const createMarkdownPlugin = (_config = {}) => {
 
       if (editorState !== newEditorState) {
         setEditorState(
-          EditorState.push(newEditorState, content, "split-block")
+          EditorState.push(newEditorState, content, 'split-block')
         );
-        return "handled";
+        return 'handled';
       }
 
-      return "not-handled";
+      return 'not-handled';
     },
     handleBeforeInput(
       character,
@@ -389,15 +389,15 @@ const createMarkdownPlugin = (_config = {}) => {
       { setEditorState }
     ) {
       // If we're in a code block - don't transform markdown
-      if (inCodeBlock(editorState)) return "not-handled";
+      if (inCodeBlock(editorState)) return 'not-handled';
 
       // If we're in a link - don't transform markdown
-      if (inLink(editorState)) return "not-handled";
+      if (inLink(editorState)) return 'not-handled';
 
       const unsticky = unstickyInlineStyles(character, editorState);
       if (editorState !== unsticky) {
         setEditorState(unsticky);
-        return "handled";
+        return 'handled';
       }
 
       const newEditorState = checkCharacterForState(
@@ -407,21 +407,21 @@ const createMarkdownPlugin = (_config = {}) => {
       );
       if (editorState !== newEditorState) {
         setEditorState(newEditorState);
-        return "handled";
+        return 'handled';
       }
-      return "not-handled";
+      return 'not-handled';
     },
     handlePastedText(text, html, editorState, { setEditorState }) {
       if (inCodeBlock(editorState)) {
         setEditorState(insertText(editorState, text));
-        return "handled";
+        return 'handled';
       }
 
-      return "not-handled";
+      return 'not-handled';
     },
-    handleKeyCommand(command, editorState, { setEditorState }) {
+    handleKeyCommand(command, editorState, eventTimeStamp, { setEditorState }) {
       switch (command) {
-        case "backspace": {
+        case 'backspace': {
           // When a styled block is the first thing in the editor,
           // you cannot delete it. Typing backspace only deletes the content
           // but never deletes the block styling.
@@ -429,22 +429,22 @@ const createMarkdownPlugin = (_config = {}) => {
           // to 'unstyled' if we're on the first block of the editor and it's empty
           const selection = editorState.getSelection();
           const currentBlockKey = selection.getStartKey();
-          if (!currentBlockKey) return "not-handled";
+          if (!currentBlockKey) return 'not-handled';
 
           const content = editorState.getCurrentContent();
           const currentBlock = content.getBlockForKey(currentBlockKey);
           const firstBlock = content.getFirstBlock();
-          if (firstBlock !== currentBlock) return "not-handled";
+          if (firstBlock !== currentBlock) return 'not-handled';
 
           const currentBlockType = currentBlock.getType();
           const isEmpty = currentBlock.getLength() === 0;
-          if (!isEmpty || currentBlockType === "unstyled") return "not-handled";
+          if (!isEmpty || currentBlockType === 'unstyled') return 'not-handled';
 
-          setEditorState(changeCurrentBlockType(editorState, "unstyled", ""));
-          return "handled";
+          setEditorState(changeCurrentBlockType(editorState, 'unstyled', ''));
+          return 'handled';
         }
         default: {
-          return "not-handled";
+          return 'not-handled';
         }
       }
     },
